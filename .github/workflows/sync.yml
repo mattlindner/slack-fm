@@ -3,7 +3,7 @@ name: Sync Last.fm to Slack
 on:
   schedule:
     # Runs every 5 minutes (the maximum frequency allowed by GitHub Actions)
-    - cron: '*/5 * * * *'
+    - cron: '*/15 * * * *'
   workflow_dispatch: # Allows you to trigger it manually from GitHub anytime
 
 jobs:
