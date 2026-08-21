@@ -22,9 +22,20 @@ async function run() {
     if (!latestTrack) throw new Error("No tracks found.");
 
     const songString = `${latestTrack.name} - ${latestTrack.artist["#text"]}`;
-    const newDisplayName = `${USER_DISPLAY_NAME} (${songString})`;
+    let newDisplayName = `${USER_DISPLAY_NAME} ♫ (${songString})`;
 
-    // 2. Update Slack Profile Display Name
+    // 2. Enforce Slack's 80-character limit safely
+    if (newDisplayName.length > 80) {
+      // Calculate how many characters we have left for the song string
+      const prefix = `${USER_DISPLAY_NAME} ♫ (`;
+      const suffix = `...)`;
+      const allowedSongLength = 80 - prefix.length - suffix.length;
+      
+      const truncatedSongString = songString.substring(0, allowedSongLength);
+      newDisplayName = `${prefix}${truncatedSongString}${suffix}`;
+    }
+
+    // 3. Update Slack Profile Display Name
     const slackRes = await fetch("https://slack.com/api/users.profile.set", {
       method: "POST",
       headers: {
