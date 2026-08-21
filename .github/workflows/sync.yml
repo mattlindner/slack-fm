@@ -22,5 +22,5 @@ jobs:
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
-          SLACK_NAME: "Your Real Name"
+          SLACK_NAME: "matt"
         run: node update-status.js
