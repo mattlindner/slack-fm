@@ -22,7 +22,7 @@ async function run() {
     if (!latestTrack) throw new Error("No tracks found.");
 
     const songString = `${latestTrack.name} - ${latestTrack.artist["#text"]}`;
-    let newDisplayName = `${USER_DISPLAY_NAME} ♫ (${songString})`;
+    let newDisplayName = `${USER_DISPLAY_NAME} (${songString})`;
 
     // 2. Enforce Slack's 80-character limit safely
     if (newDisplayName.length > 80) {
