@@ -1,6 +1,6 @@
 const SLACK_TOKEN = process.env.SLACK_TOKEN;
 const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
-const USER_DISPLAY_NAME = process.env.SLACK_NAME || "i didn't setup my env's correctly"; 
+const USER_DISPLAY_NAME = process.env.SLACK_NAME || "i didn't setup my env's correctly";
 const LASTFM_USER = "taco343";
 
 async function run() {
@@ -21,18 +21,17 @@ async function run() {
     const latestTrack = data.recenttracks?.track?.[0];
     if (!latestTrack) throw new Error("No tracks found.");
 
-    const songString = `${latestTrack.name} - ${latestTrack.artist["#text"]}`;
-    let newDisplayName = `${USER_DISPLAY_NAME} (${songString})`;
+    const trackName = latestTrack.name;
+    const artistName = latestTrack.artist["#text"];
+    let newDisplayName = `${USER_DISPLAY_NAME} (${trackName} - ${artistName})`;
 
-    // 2. Enforce Slack's 80-character limit safely
+    // 2. Enforce Slack's 80-character limit, truncating only the track name
     if (newDisplayName.length > 80) {
-      // Calculate how many characters we have left for the song string
-      const prefix = `${USER_DISPLAY_NAME} ♫ (`;
-      const suffix = `...)`;
-      const allowedSongLength = 80 - prefix.length - suffix.length;
-      
-      const truncatedSongString = songString.substring(0, allowedSongLength);
-      newDisplayName = `${prefix}${truncatedSongString}${suffix}`;
+      const prefix = `${USER_DISPLAY_NAME} (`;
+      const suffix = `... - ${artistName})`;
+      const allowedTrackLength = 80 - prefix.length - suffix.length;
+
+      newDisplayName = `${prefix}${trackName.substring(0, allowedTrackLength)}${suffix}`;
     }
 
     // 3. Update Slack Profile Display Name
