@@ -2,6 +2,7 @@ const SLACK_TOKEN = process.env.SLACK_TOKEN;
 const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
 const USER_DISPLAY_NAME = process.env.SLACK_NAME || "i didn't setup my env's correctly";
 const LASTFM_USER = "taco343";
+const REQUEST_TIMEOUT_MS = 20000;
 
 async function run() {
   try {
@@ -11,7 +12,7 @@ async function run() {
 
     // 1. Fetch from Last.fm
     const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USER}&api_key=${LASTFM_API_KEY}&limit=1&format=json`;
-    const response = await fetch(url);
+    const response = await fetch(url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
     const data = await response.json();
 
     if (data.error) {
@@ -41,7 +42,8 @@ async function run() {
         "Authorization": `Bearer ${SLACK_TOKEN}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ profile: { display_name: newDisplayName } })
+      body: JSON.stringify({ profile: { display_name: newDisplayName } }),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
     });
 
     const slackData = await slackRes.json();
