@@ -1,8 +1,25 @@
+const {
+  RegExpMatcher,
+  TextCensor,
+  englishDataset,
+  englishRecommendedTransformers,
+} = require("obscenity");
+
 const SLACK_TOKEN = process.env.SLACK_TOKEN;
 const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
 const USER_DISPLAY_NAME = process.env.SLACK_NAME || "i didn't setup my env's correctly";
 const LASTFM_USER = "taco343";
 const REQUEST_TIMEOUT_MS = 20000;
+
+const matcher = new RegExpMatcher({
+  ...englishDataset.build(),
+  ...englishRecommendedTransformers,
+});
+const censor = new TextCensor().setStrategy(() => "***");
+
+function censorText(text) {
+  return censor.applyTo(text, matcher.getAllMatches(text));
+}
 
 async function run() {
   try {
@@ -22,8 +39,8 @@ async function run() {
     const latestTrack = data.recenttracks?.track?.[0];
     if (!latestTrack) throw new Error("No tracks found.");
 
-    const trackName = latestTrack.name;
-    const artistName = latestTrack.artist["#text"];
+    const trackName = censorText(latestTrack.name);
+    const artistName = censorText(latestTrack.artist["#text"]);
     let newDisplayName = `${USER_DISPLAY_NAME} (${trackName} - ${artistName})`;
 
     // 2. Enforce Slack's 80-character limit, truncating only the track name

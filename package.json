@@ -1,0 +1,13 @@
+{
+  "name": "slack-fm",
+  "version": "1.0.0",
+  "main": "update-status.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattlindner/slack-fm.git"
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "obscenity": "0.4.6"
+  }
+}
